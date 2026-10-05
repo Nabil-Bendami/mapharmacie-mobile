@@ -10,6 +10,7 @@ class Product {
     required this.form,
     required this.purchasePrice,
     required this.sellingPrice,
+    required this.taxRate,
     required this.categoryId,
     required this.categoryName,
     required this.imageUrl,
@@ -25,6 +26,7 @@ class Product {
   final String? form;
   final num? purchasePrice;
   final num sellingPrice;
+  final num taxRate;
   final String? categoryId;
   final String? categoryName;
   final String? imageUrl;
@@ -43,6 +45,7 @@ class Product {
       form: json['form'] as String?,
       purchasePrice: json['purchase_price'] as num?,
       sellingPrice: (json['selling_price'] as num?) ?? 0,
+      taxRate: (json['tax_rate'] as num?) ?? 0,
       categoryId: json['category_id'] as String?,
       categoryName:
           (json['category_name'] as String?) ?? category?['name'] as String?,

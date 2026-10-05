@@ -10,28 +10,31 @@ Flutter companion application for the existing MaPharmacie React + Supabase SaaS
 - Camera and manual barcode scanning with a duplicate-scan lock
 - Existing backend barcode RPC lookup and best-effort mobile scan telemetry
 - Product result, unknown barcode, quick product creation, search, and detail
+- Multi-product scan basket: confirm each scanned item without leaving the scanner, edit quantities, then check out the whole basket with cash or Tal9a
+- Checkout checks warehouse stock, submits all lines in one `complete_sale` RPC, and prepares one WhatsApp receipt; legacy Moroccan phone numbers are normalized at handoff
+- Initial warehouse stock during quick product creation
+- Quick-add form places the actual available quantity beside the essential product details (zero allowed), accepts decimal commas, and supports inline category creation with automatic selection without losing the draft
 
-No POS, purchase reception, stock mutations, finance, OCR, external product lookup, offline synchronization, or other Mobile Phase 2 workflows are included.
+No purchase reception, finance, OCR, external product lookup, or offline synchronization is included. The basket is in memory and resets on organization/session changes or app restart. WhatsApp opens a prepared message; the user must press Send. After an uncertain checkout network result, retry the same request without closing the app to avoid duplicate sales.
 
 ## Prerequisites
 
 - Flutter stable 3.47 or newer
 - Dart 3.12 or newer (required by Riverpod 3.4)
 - Xcode and CocoaPods for iOS
-- Android Studio/JDK 17 and an Android SDK with API 35 for Android
+- JDK 17 and an Android SDK with API 36 for Android (Android Studio or command-line tools)
 - Access to the same Supabase project used by the web app
 
-This machine did not have Flutter or Dart installed when the project source was created. After installing Flutter, generate any SDK-owned host files (Gradle wrapper, Xcode project, launch assets) from this directory:
+Android host files and launcher resources are included. To generate missing iOS host files on a Mac with Xcode:
 
 ```bash
-cd /Users/nabil/Documents/my-project/MaPharmacie-Mobile
-flutter create --platforms=android,ios --org com.mapharmacie .
+flutter create --platforms=ios --org com.mapharmacie .
 ```
 
 Keep these camera-specific project changes if Flutter reports conflicts:
 
 - `android/app/src/main/AndroidManifest.xml`: `CAMERA`, optional camera features
-- `android/app/build.gradle.kts`: `compileSdk = 35`, `minSdk = 23`
+- `android/app/build.gradle.kts`: `compileSdk = flutter.compileSdkVersion`, `minSdk = 24`
 - `ios/Runner/Info.plist`: `NSCameraUsageDescription`
 - `ios/Podfile`: iOS 15.5 and `PERMISSION_CAMERA=1`
 
@@ -64,7 +67,15 @@ flutter test
 flutter run --dart-define-from-file=config/env.json
 ```
 
-Choose a physical Android/iOS device for reliable camera verification. To create release artifacts:
+Choose a physical Android/iOS device for reliable camera verification. To create an APK for direct installation on an Android phone:
+
+```bash
+flutter build apk --release --dart-define-from-file=config/env.json
+```
+
+The APK is written to `build/app/outputs/flutter-apk/app-release.apk` and requires Android 7.0 (API 24) or newer. Transfer it to the phone, open it, and allow installation from that file manager when Android prompts. Internet access is required for login and Supabase data. The current release build uses the local debug signing key for personal testing; configure a dedicated release signing key before publishing to Google Play.
+
+To create store artifacts after configuring release signing:
 
 ```bash
 flutter build appbundle --release --dart-define-from-file=config/env.json

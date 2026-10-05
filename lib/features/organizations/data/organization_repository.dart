@@ -10,7 +10,8 @@ class OrganizationRepository {
     final membershipData = await _client
         .from('organization_members')
         .select('id,organization_id,role')
-        .eq('status', 'active');
+        .eq('status', 'active')
+        .eq('user_id', _client.auth.currentUser!.id);
     final memberships = List<Map<String, dynamic>>.from(membershipData);
     if (memberships.isEmpty) return const [];
     final ids = memberships

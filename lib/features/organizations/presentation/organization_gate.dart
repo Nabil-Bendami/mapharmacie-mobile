@@ -1,3 +1,5 @@
+import 'package:go_router/go_router.dart';
+import '../../subscription/subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,7 +32,34 @@ class OrganizationGate extends ConsumerWidget {
             !items.any((item) => item.organization.id == selected)) {
           return OrganizationSelectionScreen(access: items);
         }
-        return child;
+        if (GoRouterState.of(context).uri.path == '/account') return child;
+        return ref
+            .watch(packProvider)
+            .when(
+              loading: () => const Scaffold(
+                body: AppLoadingView(label: 'Vérification du pack…'),
+              ),
+              error: (e, _) => Scaffold(
+                body: AppErrorView(
+                  message: 'Droits indisponibles',
+                  onRetry: () => ref.invalidate(packProvider),
+                ),
+              ),
+              data: (pack) => pack.mobileAllowed
+                  ? child
+                  : Scaffold(
+                      appBar: AppBar(title: const Text('Abonnement')),
+                      body: ListView(
+                        children: [
+                          const SubscriptionCard(),
+                          TextButton(
+                            onPressed: () => context.go('/account'),
+                            child: const Text('Mon compte'),
+                          ),
+                        ],
+                      ),
+                    ),
+            );
       },
     );
   }

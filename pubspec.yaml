@@ -1,7 +1,7 @@
 name: ma_pharmacie_mobile
 description: Mobile barcode companion for the MaPharmacie SaaS.
 publish_to: none
-version: 0.1.0+1
+version: 0.3.1+4
 
 environment:
   sdk: ">=3.12.0 <4.0.0"
@@ -14,6 +14,7 @@ dependencies:
   mobile_scanner: ^7.4.0
   permission_handler: ^12.0.3
   supabase_flutter: ^2.17.2
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

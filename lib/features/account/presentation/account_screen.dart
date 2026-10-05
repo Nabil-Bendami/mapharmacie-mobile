@@ -1,3 +1,4 @@
+import '../../subscription/subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,6 +18,7 @@ class AccountScreen extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
+        const SubscriptionCard(),
         Card(
           child: Padding(
             padding: const EdgeInsets.all(20),

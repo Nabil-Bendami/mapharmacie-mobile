@@ -16,6 +16,7 @@ import '../../features/products/presentation/product_not_found_screen.dart';
 import '../../features/products/presentation/products_screen.dart';
 import '../../features/products/presentation/quick_add_product_screen.dart';
 import '../../features/scanner/presentation/scanner_screen.dart';
+import '../../features/sales/presentation/scanned_sale_screen.dart';
 import 'main_shell.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -44,6 +45,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/products', builder: (_, _) => const ProductsScreen()),
           GoRoute(path: '/account', builder: (_, _) => const AccountScreen()),
         ],
+      ),
+      GoRoute(
+        path: '/sales/new/:productId',
+        builder: (_, state) => OrganizationGate(
+          child: ScannedSaleScreen(
+            productId: state.pathParameters['productId']!,
+          ),
+        ),
       ),
       GoRoute(
         path: '/products/new',
